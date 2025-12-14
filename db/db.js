@@ -1,24 +1,25 @@
 const mysql = require('mysql2/promise')
 
+let db = null
 const createConnection = async() => { 
   try {
-    const db = await mysql.createConnection({
+    const OldDb = await mysql.createConnection({
       host: process.env.DB_host,
       user: process.env.DB_User,
       password: process.env.DB_password
     });
     
-    const [databases] = await db.execute('SHOW DATABASES');
+    const [databases] = await OldDb.execute('SHOW DATABASES');
     const MappedDb = databases.find((val) => val.Database === 'monsql');
     
     if (!MappedDb) {
-      await db.execute('CREATE DATABASE monsql');
+      await OldDb.execute('CREATE DATABASE monsql');
       console.log('✅ Database "monsql" created');
     }
     
-    await db.end();
+    await OldDb.end();
     
-    const dbWithDatabase = await mysql.createConnection({
+      db = await mysql.createConnection({
       host: process.env.DB_host,
       user: process.env.DB_User,
       password: process.env.DB_password,
@@ -27,7 +28,7 @@ const createConnection = async() => {
     
     console.log('✅ Connected to database "monsql"');
     
-    await dbWithDatabase.execute(`
+    await db.execute(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
@@ -38,11 +39,18 @@ const createConnection = async() => {
     
     console.log('✅ Table "users" is ready');
     
-    return dbWithDatabase;
+    return db;
     
   } catch (error) {
     console.error(error);
   }
 }
 
-module.exports = createConnection
+const getDB = () => {
+  if (!db) {
+    throw new Error('Database not initialized. Call createConnection first.');
+  }
+  return db;
+};
+
+module.exports = {createConnection, getDB}

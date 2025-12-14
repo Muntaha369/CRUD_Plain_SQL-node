@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express');
 const app = express();
-const createConnection = require('./db/db')
+const { createConnection } = require('./db/db')
 const useRouter = require('./routes/router')
 
 app.use(express.json()); 
