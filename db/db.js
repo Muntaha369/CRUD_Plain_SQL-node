@@ -13,7 +13,7 @@ const createConnection = async() => {
     
     if (!MappedDb) {
       await db.execute('CREATE DATABASE monsql');
-      console.log('Database "monsql" created');
+      console.log('✅ Database "monsql" created');
     }
     
     await db.end();
@@ -25,7 +25,19 @@ const createConnection = async() => {
       database: 'monsql'  
     });
     
-    console.log('Connected to database "monsql"');
+    console.log('✅ Connected to database "monsql"');
+    
+    await dbWithDatabase.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    console.log('✅ Table "users" is ready');
+    
     return dbWithDatabase;
     
   } catch (error) {
