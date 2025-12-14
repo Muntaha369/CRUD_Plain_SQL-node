@@ -1,8 +1,16 @@
 const { getDB } = require('../db/db')
+const validate = require('../validators/validators')
 
 const signup = async(req, res) => {
   try {
-    const {email, password} = req.body;
+    // const {email, password} = req.body;
+    const { data, error } = validate.safeParse(req.body);
+    if(error){
+      console.log(error)
+      return res.status(401).json({msg:error})
+    }
+    
+    const {email, password} = data
     
     if (!email || !password) {
       return res.status(400).json({ 
