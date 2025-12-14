@@ -19,7 +19,6 @@ app.post('/api/data', (req, res) => {
   res.status(201).json({ message: "Data received", data });
 });
 
-
 createConnection().then(() => {
   app.listen(process.env.PORT, () => {
     console.log(` Server is running on http://localhost:${process.env.PORT}`);

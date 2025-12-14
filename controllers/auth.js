@@ -38,4 +38,33 @@ const signup = async(req, res) => {
   }
 }
 
-module.exports = {signup}
+const login = async(req, res)=>{
+  const {email, password} = req.body; 
+
+  const db = getDB();
+
+  if (!email || !password) {
+      return res.status(400).json({ 
+        msg: "Email and password are required" 
+      });
+  }
+
+const [rows] = await db.execute(
+  'SELECT email FROM users WHERE email = ?',
+  [email]
+);
+
+const checkEmail = rows[0];
+
+console.log("TEST 1", rows)
+console.log("TEST 2", rows[0])
+
+if(!checkEmail){
+  return res.json({msg:"Invalid credential"})
+}
+
+return res.json({msg:"Email exists", checkEmail})
+
+}
+
+module.exports = { signup, login }
