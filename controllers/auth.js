@@ -50,8 +50,8 @@ const login = async(req, res)=>{
   }
 
 const [rows] = await db.execute(
-  'SELECT email FROM users WHERE email = ?',
-  [email]
+  'SELECT * FROM users WHERE email = ? AND password = ?',
+  [email, password]
 );
 
 const checkEmail = rows[0];
